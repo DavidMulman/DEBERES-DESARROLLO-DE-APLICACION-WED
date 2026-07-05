@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingeniería en Tecnologías de la Información y Comunicación</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background-color:#efeff3;
+        }
+
+        header{
+            background: linear-gradient(135deg,#0d6efd,#001f54);
+            color:rgb(15, 15, 15);
+            text-align:center;
+            padding:80px 20px;
+        }
+
+        section{
+            padding:60px 0;
+        }
+
+        .card{
+            transition:0.3s;
+        }
+
+        .card:hover{
+            transform:translateY(-10px);
+        }
+
+        footer{
+            background:#fafaf9;
+            color:rgb(10, 10, 10);
+            text-align:center;
+            padding:20px;
+        }
+
+        .video-container{
+            position:relative;
+            overflow:hidden;
+            width:100%;
+            padding-top:56.25%;
+        }
+
+        .video-container iframe{
+            position:absolute;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+        }
+
+        .hero-img{
+            border-radius:15px;
+            box-shadow:0 4px 10px #2524244d;
+        }
+    </style>
+</head>
+<body>
+
+<!-- MENÚ -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="#">Ingeniería TIC</a>
+
+        <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#menu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="menu">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="#inicio">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link" href="#quienes">Quiénes Somos</a></li>
+                <li class="nav-item"><a class="nav-link" href="#tic">¿Qué son las TIC?</a></li>
+                <li class="nav-item"><a class="nav-link" href="#areas">Áreas</a></li>
+                <li class="nav-item"><a class="nav-link" href="#perfil">Perfil</a></li>
+                <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- INICIO -->
+<header id="inicio">
+    <div class="container">
+        <h1 class="display-4">Ingeniería en Tecnologías de la Información y Comunicación</h1>
+
+        <p class="lead mt-4">
+            Carrera orientada a la innovación tecnológica, desarrollo de software,
+            redes informáticas, inteligencia artificial, ciberseguridad y transformación digital.
+        </p>
+
+        <a href="#quienes" class="btn btn-light btn-lg mt-3">
+            Conocer la Carrera
+        </a>
+    </div>
+</header>
+
+<!-- QUIÉNES SOMOS -->
+<section id="quienes">
+    <div class="container">
+        <h2 class="text-center mb-5">¿Quiénes Somos?</h2>
+
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3"
+                     class="img-fluid hero-img"
+                     alt="Tecnología">
+            </div>
+
+            <div class="col-md-6">
+                <p>
+                    La carrera de Ingeniería en Tecnologías de la Información y Comunicación (TIC)
+                    forma profesionales capaces de diseñar, implementar y administrar soluciones
+                    tecnológicas para organizaciones públicas y privadas.
+                </p>
+
+                <p>
+                    Nuestro objetivo es preparar especialistas que respondan a las necesidades
+                    actuales del mercado tecnológico mediante conocimientos en programación,
+                    redes, bases de datos, ciberseguridad e inteligencia artificial.
+                </p>
+
+                <h4>Misión</h4>
+                <p>
+                    Formar profesionales altamente capacitados para liderar procesos de innovación tecnológica.
+                </p>
+
+                <h4>Visión</h4>
+                <p>
+                    Ser una carrera reconocida por la excelencia académica y la transformación digital.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- QUÉ SON LAS TIC -->
+<section id="tic" class="bg-light">
+    <div class="container">
+        <h2 class="text-center mb-4">¿Qué son las TIC?</h2>
+
+        <p class="text-center">
+            Las Tecnologías de la Información y Comunicación son el conjunto de herramientas,
+            recursos y sistemas que permiten crear, almacenar, procesar y transmitir información
+            mediante dispositivos digitales y redes de comunicación.
+        </p>
+
+        <div class="row text-center mt-5">
+            <div class="col-md-3">
+                <h5>Comunicación Global</h5>
+            </div>
+
+            <div class="col-md-3">
+                <h5>Educación Virtual</h5>
+            </div>
+
+            <div class="col-md-3">
+                <h5>Transformación Digital</h5>
+            </div>
+
+            <div class="col-md-3">
+                <h5>Innovación Tecnológica</h5>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ÁREAS DE FORMACIÓN -->
+<header id="areas">
+<section class="container py-5">
+
+    <h2 class="text-center mb-4">
+        Registrar Nueva Tecnología
+    </h2>
+
+    <div id="mensaje"></div>
+
+    <form id="formTecnologia">
+
+        <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <input
+                type="text"
+                id="nombre"
+                class="form-control">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Descripción</label>
+
+            <textarea
+                id="descripcion"
+                class="form-control"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Categoría</label>
+
+            <input
+                type="text"
+                id="categoria"
+                class="form-control">
+        </div>
+
+        <button class="btn btn-success">
+            Agregar
+        </button>
+
+    </form>
+
+    <hr>
+
+    <h4>Total de registros:
+        <span id="total">0</span>
+    </h4>
+
+    <div id="lista"></div>
+
+</section>
+
+<!-- TECNOLOGÍAS -->
+<section class="bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Tecnologías que Aprende un Ingeniero TIC</h2>
+
+        <div class="row text-center">
+
+            <div class="col-md-3">
+                <div class="card p-3">
+                    <h5>HTML5</h5>
+                    <p>Estructura Web</p>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card p-3">
+                    <h5>CSS3</h5>
+                    <p>Diseño Visual</p>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card p-3">
+                    <h5>JavaScript</h5>
+                    <p>Interactividad</p>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card p-3">
+                    <h5>Python</h5>
+                    <p>Desarrollo e IA</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- PERFIL -->
+<section id="perfil">
+    <div class="container">
+        <h2 class="text-center mb-5">Perfil Profesional</h2>
+
+        <ul class="list-group">
+            <li class="list-group-item">Diseñar soluciones tecnológicas innovadoras.</li>
+            <li class="list-group-item">Desarrollar aplicaciones web y móviles.</li>
+            <li class="list-group-item">Administrar redes informáticas.</li>
+            <li class="list-group-item">Gestionar bases de datos empresariales.</li>
+            <li class="list-group-item">Implementar sistemas de ciberseguridad.</li>
+            <li class="list-group-item">Aplicar inteligencia artificial y análisis de datos.</li>
+            <li class="list-group-item">Dirigir proyectos tecnológicos.</li>
+        </ul>
+    </div>
+</section>
+
+<!-- CAMPO LABORAL -->
+<section class="bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Campo Laboral</h2>
+
+        <div class="row">
+
+            <div class="col-md-3"><div class="card p-3 text-center">Desarrollador Web</div></div>
+            <div class="col-md-3"><div class="card p-3 text-center">Analista de Sistemas</div></div>
+            <div class="col-md-3"><div class="card p-3 text-center">Especialista en Ciberseguridad</div></div>
+            <div class="col-md-3"><div class="card p-3 text-center">Administrador de Redes</div></div>
+
+        </div>
+    </div>
+</section>
+
+<!-- VIDEO -->
+<section id="video" class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">Video Informativo sobre las TIC</h2>
+
+        <div class="ratio ratio-16x9">
+    <iframe
+        src="https://www.youtube.com/watch?v=q8MeNBwRtPU"
+        title="Video TIC"
+        allowfullscreen>
+    </iframe>
+</div>
+    </div>
+</section>
+<!-- CONTACTO -->
+<section id="contacto" class="bg-light">
+    <div class="container">
+        <h2 class="text-center mb-4">Contacto</h2>
+
+        <form>
+
+            <div class="mb-3">
+                <label class="form-label">Nombre Completo</label>
+                <input type="text" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Correo Electrónico</label>
+                <input type="email" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Teléfono</label>
+                <input type="tel" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Mensaje</label>
+                <textarea class="form-control" rows="4"></textarea>
+            </div>
+
+            <button class="btn btn-primary">
+                Enviar Información
+            </button>
+
+        </form>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <p>Proyecto Integrador - Desarrollo de Aplicaciones Web</p>
+    <p>Ingeniería en Tecnologías de la Información y Comunicación (TIC)</p>
+    <p>© 2026 Todos los derechos reservados</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
