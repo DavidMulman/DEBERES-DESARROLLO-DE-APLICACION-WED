@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Formulario de Facturación | Ingeniería TIC{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-sm p-4">
+
+                    <h2 class="text-center mb-4">Registrar Factura</h2>
+
+                    {% if mensaje %}
+                        <div class="alert alert-success">
+                            {{ mensaje }}
+                        </div>
+                    {% endif %}
+
+                    <form method="POST" novalidate>
+                        {{ form.hidden_tag() }}
+
+                        <div class="mb-3">
+                            {{ form.cliente.label(class="form-label") }}
+                            {{ form.cliente(class="form-control") }}
+
+                            {% for error in form.cliente.errors %}
+                                <div class="text-danger">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.producto.label(class="form-label") }}
+                            {{ form.producto(class="form-control") }}
+
+                            {% for error in form.producto.errors %}
+                                <div class="text-danger">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.cantidad.label(class="form-label") }}
+                            {{ form.cantidad(class="form-control") }}
+
+                            {% for error in form.cantidad.errors %}
+                                <div class="text-danger">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.total.label(class="form-label") }}
+                            {{ form.total(class="form-control") }}
+
+                            {% for error in form.total.errors %}
+                                <div class="text-danger">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
