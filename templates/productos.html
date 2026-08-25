@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Productos | Ingeniería TIC{% endblock %}
+{% block content %}
+<section>
+    <div class="container">
+        <h1 class="text-center mb-4">Módulo de Productos</h1>
+        <p class="text-center mb-5">Listado demostrativo de productos y recursos tecnológicos.</p>
+        <div class="row">
+            {% for producto in productos %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 p-3 shadow-sm">
+                    <h4>{{ producto.nombre|upper }}</h4>
+                    <span class="badge bg-primary mb-3">{{ producto.categoria }}</span>
+                    <p>{{ producto.descripcion }}</p>
+                    <h5>${{ "%.2f"|format(producto.precio) }}</h5>
+
+                    {% if producto.stock > 0 %}
+    <span class="badge bg-success">Disponible</span>
+{% else %}
+    <span class="badge bg-danger">Agotado</span>
+{% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

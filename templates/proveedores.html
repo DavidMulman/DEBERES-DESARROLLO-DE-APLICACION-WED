@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Proveedores | Ingeniería TIC{% endblock %}
+{% block content %}
+<section>
+    <div class="container">
+        <h1 class="text-center mb-4">Módulo de Proveedores</h1>
+        <p class="text-center mb-5">Listado demostrativo de proveedores tecnológicos.</p>
+        <div class="row">
+            {% for proveedor in proveedores %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 p-4 shadow-sm">
+                    <h4>{{ proveedor.nombre }}</h4>
+                    <p><strong>Servicio:</strong> {{ proveedor.servicio }}</p>
+                    <p><strong>Contacto:</strong> {{ proveedor.contacto }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

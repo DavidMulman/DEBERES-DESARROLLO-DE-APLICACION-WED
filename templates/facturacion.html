@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Facturación | Ingeniería TIC{% endblock %}
+{% block content %}
+<section>
+    <div class="container">
+        <h1 class="text-center mb-4">Módulo de Facturación</h1>
+        <p class="text-center mb-5">Facturas demostrativas para la Semana 9. No se utiliza base de datos.</p>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle shadow-sm">
+                <thead class="table-dark">
+                    <tr><th>N.º Factura</th><th>Cliente</th><th>Fecha</th><th>Total</th><th>Estado</th></tr>
+                </thead>
+                <tbody>
+                    {% for factura in facturas %}
+                    <tr>
+                        <td>{{ factura.numero }}</td>
+                        <td>{{ factura.cliente }}</td>
+                        <td>{{ factura.fecha }}</td>
+                        <td>${{ "%.2f"|format(factura.total) }}</td>
+                        <td>
+                            {% if factura.estado == "Pagada" %}
+                                <span class="badge bg-success">{{ factura.estado }}</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">{{ factura.estado }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}

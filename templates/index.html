@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio | Ingeniería TIC{% endblock %}
+
+{% block content %}
+<header id="inicio">
+    <div class="container">
+        <h1 class="display-4">{{ titulo }}</h1>
+        <p class="lead mt-4">{{ mensaje }}</p>
+            Carrera orientada a la innovación tecnológica, desarrollo de software,
+            redes informáticas, inteligencia artificial, ciberseguridad y transformación digital.
+        </p>
+        <a href="#quienes" class="btn btn-light btn-lg mt-3">Conocer la Carrera</a>
+    </div>
+</header>
+
+<section id="quienes">
+    <div class="container">
+        <h2 class="text-center mb-5">¿Quiénes Somos?</h2>
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3"
+                     class="img-fluid hero-img" alt="Tecnología">
+            </div>
+            <div class="col-md-6">
+                <p>
+                    La carrera de Ingeniería en Tecnologías de la Información y Comunicación (TIC)
+                    forma profesionales capaces de diseñar, implementar y administrar soluciones
+                    tecnológicas para organizaciones públicas y privadas.
+                </p>
+                <p>
+                    Nuestro objetivo es preparar especialistas que respondan a las necesidades
+                    actuales del mercado tecnológico mediante conocimientos en programación,
+                    redes, bases de datos, ciberseguridad e inteligencia artificial.
+                </p>
+                <h4>Misión</h4>
+                <p>Formar profesionales altamente capacitados para liderar procesos de innovación tecnológica.</p>
+                <h4>Visión</h4>
+                <p>Ser una carrera reconocida por la excelencia académica y la transformación digital.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="tic" class="bg-light">
+    <div class="container">
+        <h2 class="text-center mb-4">¿Qué son las TIC?</h2>
+        <p class="text-center">
+            Las Tecnologías de la Información y Comunicación son el conjunto de herramientas,
+            recursos y sistemas que permiten crear, almacenar, procesar y transmitir información
+            mediante dispositivos digitales y redes de comunicación.
+        </p>
+        <div class="row text-center mt-5">
+            <div class="col-md-3 mb-3"><div class="card p-3 h-100"><h5>Comunicación Global</h5></div></div>
+            <div class="col-md-3 mb-3"><div class="card p-3 h-100"><h5>Educación Virtual</h5></div></div>
+            <div class="col-md-3 mb-3"><div class="card p-3 h-100"><h5>Transformación Digital</h5></div></div>
+            <div class="col-md-3 mb-3"><div class="card p-3 h-100"><h5>Innovación Tecnológica</h5></div></div>
+        </div>
+    </div>
+</section>
+
+<section id="areas">
+    <div class="container py-5">
+        <h2 class="text-center mb-4">Registrar Nueva Tecnología</h2>
+        <div id="mensaje"></div>
+
+        <form id="formTecnologia">
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" id="nombre" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="descripcion" class="form-label">Descripción</label>
+                <textarea id="descripcion" class="form-control" required></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="categoria" class="form-label">Categoría</label>
+                <input type="text" id="categoria" class="form-control" required>
+            </div>
+
+            <button class="btn btn-success" type="submit">Agregar</button>
+        </form>
+
+        <hr>
+        <h4>Total de registros: <span id="total">0</span></h4>
+        <div id="lista"></div>
+    </div>
+</section>
+
+<section class="bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Tecnologías que Aprende un Ingeniero TIC</h2>
+        <div class="row text-center">
+            <div class="col-md-3 mb-3"><div class="card p-3 h-100"><h5>HTML5</h5><p>Estructura Web</p></div></div>
+            <div class="col-md-3 mb-3"><div class="card p-3 h-100"><h5>CSS3</h5><p>Diseño Visual</p></div></div>
+            <div class="col-md-3 mb-3"><div class="card p-3 h-100"><h5>JavaScript</h5><p>Interactividad</p></div></div>
+            <div class="col-md-3 mb-3"><div class="card p-3 h-100"><h5>Python</h5><p>Desarrollo e IA</p></div></div>
+        </div>
+    </div>
+</section>
+
+<section id="perfil">
+    <div class="container">
+        <h2 class="text-center mb-5">Perfil Profesional</h2>
+        <ul class="list-group">
+            <li class="list-group-item">Diseñar soluciones tecnológicas innovadoras.</li>
+            <li class="list-group-item">Desarrollar aplicaciones web y móviles.</li>
+            <li class="list-group-item">Administrar redes informáticas.</li>
+            <li class="list-group-item">Gestionar bases de datos empresariales.</li>
+            <li class="list-group-item">Implementar sistemas de ciberseguridad.</li>
+            <li class="list-group-item">Aplicar inteligencia artificial y análisis de datos.</li>
+            <li class="list-group-item">Dirigir proyectos tecnológicos.</li>
+        </ul>
+    </div>
+</section>
+
+<section class="bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Campo Laboral</h2>
+        <div class="row">
+            <div class="col-md-3 mb-3"><div class="card p-3 text-center h-100">Desarrollador Web</div></div>
+            <div class="col-md-3 mb-3"><div class="card p-3 text-center h-100">Analista de Sistemas</div></div>
+            <div class="col-md-3 mb-3"><div class="card p-3 text-center h-100">Especialista en Ciberseguridad</div></div>
+            <div class="col-md-3 mb-3"><div class="card p-3 text-center h-100">Administrador de Redes</div></div>
+        </div>
+    </div>
+</section>
+
+<section id="video" class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">Video Informativo sobre las TIC</h2>
+        <div class="ratio ratio-16x9">
+            <iframe src="https://www.youtube.com/embed/q8MeNBwRtPU"
+                    title="Video TIC" allowfullscreen></iframe>
+        </div>
+    </div>
+</section>
+
+<section id="contacto" class="bg-light">
+    <div class="container">
+        <h2 class="text-center mb-4">Contacto</h2>
+        <form onsubmit="return validarContacto(event)">
+            <div class="mb-3">
+                <label class="form-label">Nombre Completo</label>
+                <input type="text" id="contactoNombre" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Correo Electrónico</label>
+                <input type="email" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Teléfono</label>
+                <input type="tel" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Mensaje</label>
+                <textarea class="form-control" rows="4" required></textarea>
+            </div>
+            <button class="btn btn-primary" type="submit">Enviar Información</button>
+        </form>
+    </div>
+</section>
+{% endblock %}
