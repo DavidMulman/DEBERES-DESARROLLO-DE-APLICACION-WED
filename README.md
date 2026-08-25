@@ -68,14 +68,17 @@ http://127.0.0.1:5000/
 
 Rutas:
 
-/
-/productos
-/productos/nuevo
-/clientes
-/clientes/nuevo
-/proveedores
-/proveedores/nuevo
-/facturacion
-/facturacion/nueva
 
+```markdown
+## Rutas
+
+- `/`
+- `/productos`
+- `/productos/nuevo`
+- `/clientes`
+- `/clientes/nuevo`
+- `/proveedores`
+- `/proveedores/nuevo`
+- `/facturacion`
+- `/facturacion/nueva`
 No se utiliza base de datos en esta semana; los módulos utilizan datos demostrativos.
