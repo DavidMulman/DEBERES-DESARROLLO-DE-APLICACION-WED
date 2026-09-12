@@ -5,6 +5,13 @@
     <div class="container">
         <h1 class="text-center mb-4">Módulo de Proveedores</h1>
         <p class="text-center mb-5">Listado demostrativo de proveedores tecnológicos.</p>
+
+        <div class="text-end mb-4">
+    <a href="{{ url_for('nuevo_proveedor') }}" class="btn btn-primary">
+        Registrar nuevo proveedor
+    </a>
+         </div>
+
         <div class="row">
             {% for proveedor in proveedores %}
             <div class="col-md-4 mb-4">

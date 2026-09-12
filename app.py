@@ -4,8 +4,38 @@ from forms.cliente_form import ClienteForm
 from forms.proveedor_form import ProveedorForm
 from forms.facturacion_form import FacturacionForm
 
+import sqlite3
+import os
+
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "clave-secreta-proyecto-tic"
+
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+DB_PATH = os.path.join(BASE_DIR, "data", "ferreteria.db")
+
+def conectar_db():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def crear_tabla_productos():
+    conn = conectar_db()
+
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS productos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre TEXT NOT NULL,
+            categoria TEXT NOT NULL,
+            descripcion TEXT NOT NULL,
+            precio REAL NOT NULL,
+            stock INTEGER NOT NULL
+        )
+    """)
+
+    conn.commit()
+    conn.close()
+
+crear_tabla_productos()
 
 @app.route("/")
 def inicio():
@@ -20,26 +50,42 @@ def inicio():
 
 @app.route("/productos")
 def productos():
-    productos = [
-        {"nombre": "Computador portátil", "categoria": "Hardware", "descripcion": "Equipo para desarrollo de software y actividades académicas.", "precio": 850.00, "stock": 10},
-        {"nombre": "Router Wi-Fi", "categoria": "Redes", "descripcion": "Dispositivo para conectividad y administración de redes.", "precio": 95.00, "stock": 7},
-        {"nombre": "Servidor", "categoria": "Infraestructura", "descripcion": "Equipo destinado a servicios y almacenamiento de información.", "precio": 1450.00, "stock": 0}
-    ]
-    return render_template("productos.html", productos=productos)
+    conn = conectar_db()
+
+    productos = conn.execute("""
+        SELECT id, nombre, categoria, descripcion, precio, stock
+        FROM productos
+        ORDER BY id DESC
+    """).fetchall()
+
+    conn.close()
+
+    return render_template(
+        "productos.html",
+        productos=productos
+    )
+
 @app.route("/productos/nuevo", methods=["GET", "POST"])
 def nuevo_producto():
     form = ProductoForm()
 
     if form.validate_on_submit():
-        producto = {
-            "nombre": form.nombre.data,
-            "categoria": form.categoria.data,
-            "descripcion": form.descripcion.data,
-            "precio": float(form.precio.data),
-            "stock": form.stock.data
-        }
+        conn = conectar_db()
 
-        print(producto)
+        conn.execute("""
+            INSERT INTO productos
+            (nombre, categoria, descripcion, precio, stock)
+            VALUES (?, ?, ?, ?, ?)
+        """, (
+            form.nombre.data,
+            form.categoria.data,
+            form.descripcion.data,
+            float(form.precio.data),
+            form.stock.data
+        ))
+
+        conn.commit()
+        conn.close()
 
         return render_template(
             "formulario_producto.html",
@@ -51,7 +97,6 @@ def nuevo_producto():
         "formulario_producto.html",
         form=form
     )
-
 @app.route("/clientes")
 def clientes():
     clientes = [
@@ -150,6 +195,8 @@ def nueva_factura():
         "formulario_facturacion.html",
         form=form
     )
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)

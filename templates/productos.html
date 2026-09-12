@@ -4,7 +4,14 @@
 <section>
     <div class="container">
         <h1 class="text-center mb-4">Módulo de Productos</h1>
-        <p class="text-center mb-5">Listado demostrativo de productos y recursos tecnológicos.</p>
+        <p class="text-center mb-5">Productos registrados y almacenados en la base de datos SQLite..</p>
+
+        <div class="text-end mb-4">
+    <a href="{{ url_for('nuevo_producto') }}" class="btn btn-primary">
+        Registrar nuevo producto
+    </a>
+        </div>
+
         <div class="row">
             {% for producto in productos %}
             <div class="col-md-4 mb-4">

@@ -5,6 +5,13 @@
     <div class="container">
         <h1 class="text-center mb-4">Módulo de Facturación</h1>
         <p class="text-center mb-5">Facturas demostrativas para la Semana 9. No se utiliza base de datos.</p>
+
+        <div class="text-end mb-4">
+    <a href="{{ url_for('nueva_factura') }}" class="btn btn-primary">
+        Nueva factura
+    </a>
+         </div>
+        
         <div class="table-responsive">
             <table class="table table-bordered table-hover align-middle shadow-sm">
                 <thead class="table-dark">
