@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, url_for, flash
 from forms.producto_form import ProductoForm
 from forms.cliente_form import ClienteForm
 from forms.proveedor_form import ProveedorForm
@@ -87,10 +87,14 @@ def nuevo_producto():
         conn.commit()
         conn.close()
 
-        return render_template(
-            "formulario_producto.html",
-            form=form,
-            mensaje="Producto registrado correctamente."
+         # Crear un formulario nuevo y vacío
+        flash("Producto registrado correctamente.", "success")
+
+        return redirect(url_for("nuevo_producto"))
+
+    return render_template(
+        "formulario_producto.html",
+        form=form
         )
 
     return render_template(
