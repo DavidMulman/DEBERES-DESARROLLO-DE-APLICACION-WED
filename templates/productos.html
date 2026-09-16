@@ -4,7 +4,7 @@
 <section>
     <div class="container">
         <h1 class="text-center mb-4">Módulo de Productos</h1>
-        <p class="text-center mb-5">Productos registrados y almacenados en la base de datos SQLite..</p>
+        <p class="text-center mb-5">Productos registrados y almacenados en la base de datos MySQL.</p>
 
         <div class="text-end mb-4">
     <a href="{{ url_for('nuevo_producto') }}" class="btn btn-primary">
@@ -26,6 +26,26 @@
 {% else %}
     <span class="badge bg-danger">Agotado</span>
 {% endif %}
+
+<a href="{{ url_for('editar_producto', id=producto.id) }}"
+   class="btn btn-warning w-100 mt-3">
+    Editar producto
+</a>
+
+<form action="{{ url_for('eliminar_producto', id=producto.id) }}"
+      method="POST"
+      class="mt-3">
+
+    <button type="submit"
+            class="btn btn-danger w-100"
+            onclick="return confirm('¿Seguro que deseas eliminar este producto?')">
+
+        Eliminar producto
+
+    </button>
+
+</form>
+
                 </div>
             </div>
             {% endfor %}
