@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Panel Principal{% endblock %}
+
+{% block content %}
+
+<section class="py-5">
+    <div class="container">
+
+        <div class="text-center">
+
+            <h1 class="mb-3">
+                Panel Principal
+            </h1>
+
+            <p class="lead">
+                Bienvenido, {{ current_user.usuario }}
+            </p>
+
+            <div class="mt-4">
+
+                <a href="{{ url_for('productos') }}"
+                   class="btn btn-primary m-2">
+                    Productos
+                </a>
+
+                <a href="{{ url_for('clientes') }}"
+                   class="btn btn-success m-2">
+                    Clientes
+                </a>
+
+                <a href="{{ url_for('proveedores') }}"
+                   class="btn btn-warning m-2">
+                    Proveedores
+                </a>
+
+                <a href="{{ url_for('facturacion') }}"
+                   class="btn btn-info m-2">
+                    Facturación
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

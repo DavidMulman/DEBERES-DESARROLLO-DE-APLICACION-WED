@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Iniciar Sesión{% endblock %}
+
+{% block content %}
+
+<section class="py-5">
+    <div class="container">
+
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+
+                <div class="card shadow p-4">
+
+                    <h2 class="text-center mb-4">
+                        Iniciar Sesión
+                    </h2>
+
+                    {% with mensajes = get_flashed_messages(with_categories=true) %}
+                        {% if mensajes %}
+                            {% for categoria, mensaje in mensajes %}
+                                <div class="alert alert-{{ categoria }} alert-dismissible fade show" role="alert">
+                                    {{ mensaje }}
+                                    <button type="button"
+                                            class="btn-close"
+                                            data-bs-dismiss="alert">
+                                    </button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <form method="POST" novalidate>
+
+                        {{ form.hidden_tag() }}
+
+                        <div class="mb-3">
+                            {{ form.usuario.label(class="form-label") }}
+                            {{ form.usuario(class="form-control", autocomplete="off") }}
+
+                            {% for error in form.usuario.errors %}
+                                <div class="text-danger">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.password.label(class="form-label") }}
+                                    {{ form.password(class="form-control", autocomplete="new-password") }}
+                            {% for error in form.password.errors %}
+                                <div class="text-danger">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('registro') }}">
+                            Crear una cuenta
+                        </a>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+<script>
+    window.addEventListener("pageshow", function () {
+        const usuario = document.querySelector(
+            'input[name="usuario"]'
+        );
+
+        const password = document.querySelector(
+            'input[name="password"]'
+        );
+
+        if (usuario) {
+            usuario.value = "";
+        }
+
+        if (password) {
+            password.value = "";
+        }
+    });
+</script>
+{% endblock %}
