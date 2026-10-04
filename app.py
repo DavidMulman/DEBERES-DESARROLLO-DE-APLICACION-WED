@@ -1,4 +1,8 @@
+import os
+
 from flask import Flask, render_template, redirect, url_for, flash
+from flask_login import LoginManager, login_user, logout_user, login_required
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from forms.producto_form import ProductoForm
 from forms.cliente_form import ClienteForm
@@ -7,25 +11,15 @@ from forms.facturacion_form import FacturacionForm
 from forms.login_form import LoginForm
 from forms.usuario_form import UsuarioForm
 
-from conexion.conexion import conectar_mysql
+from conexion.conexion import conectar_postgresql
 from models import Usuario
-
-from flask_login import (
-    LoginManager,
-    login_user,
-    logout_user,
-    login_required,
-    current_user
-)
-
-from werkzeug.security import (
-    generate_password_hash,
-    check_password_hash
-)
 
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = "clave-secreta-proyecto-tic"
+app.config["SECRET_KEY"] = os.getenv(
+    "SECRET_KEY",
+    "clave-secreta-proyecto-tic"
+)
 
 
 # ==========================================================
@@ -34,7 +28,6 @@ app.config["SECRET_KEY"] = "clave-secreta-proyecto-tic"
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-
 login_manager.login_view = "login"
 login_manager.login_message = "Debe iniciar sesión para acceder a esta página."
 login_manager.login_message_category = "warning"
@@ -46,9 +39,8 @@ login_manager.login_message_category = "warning"
 
 @login_manager.user_loader
 def load_user(user_id):
-
-    conn = conectar_mysql()
-    cursor = conn.cursor(dictionary=True)
+    conn = conectar_postgresql()
+    cursor = conn.cursor()
 
     cursor.execute(
         "SELECT id, usuario FROM usuarios WHERE id = %s",
@@ -75,15 +67,12 @@ def load_user(user_id):
 
 @app.route("/registro", methods=["GET", "POST"])
 def registro():
-
     form = UsuarioForm()
 
     if form.validate_on_submit():
+        conn = conectar_postgresql()
+        cursor = conn.cursor()
 
-        conn = conectar_mysql()
-        cursor = conn.cursor(dictionary=True)
-
-        # Comprobar si el usuario ya existe
         cursor.execute(
             "SELECT id FROM usuarios WHERE usuario = %s",
             (form.usuario.data,)
@@ -92,7 +81,6 @@ def registro():
         usuario_existente = cursor.fetchone()
 
         if usuario_existente:
-
             cursor.close()
             conn.close()
 
@@ -106,12 +94,8 @@ def registro():
                 form=form
             )
 
-        # Proteger la contraseña mediante HASH
-        password_hash = generate_password_hash(
-            form.password.data
-        )
+        password_hash = generate_password_hash(form.password.data)
 
-        # Registrar usuario
         cursor.execute("""
             INSERT INTO usuarios (usuario, password)
             VALUES (%s, %s)
@@ -121,7 +105,6 @@ def registro():
         ))
 
         conn.commit()
-
         cursor.close()
         conn.close()
 
@@ -144,34 +127,29 @@ def registro():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-
     form = LoginForm()
 
     if form.validate_on_submit():
+        conn = conectar_postgresql()
+        cursor = conn.cursor()
 
-        conn = conectar_mysql()
-        cursor = conn.cursor(dictionary=True)
-
-        cursor.execute(
-            """
+        cursor.execute("""
             SELECT id, usuario, password
             FROM usuarios
             WHERE usuario = %s
-            """,
-            (form.usuario.data,)
-        )
+        """, (
+            form.usuario.data,
+        ))
 
         datos_usuario = cursor.fetchone()
 
         cursor.close()
         conn.close()
 
-        # Comprobar contraseña protegida
         if datos_usuario and check_password_hash(
             datos_usuario["password"],
             form.password.data
         ):
-
             usuario = Usuario(
                 datos_usuario["id"],
                 datos_usuario["usuario"]
@@ -204,10 +182,7 @@ def login():
 @app.route("/dashboard")
 @login_required
 def dashboard():
-
-    return render_template(
-        "dashboard.html"
-    )
+    return render_template("dashboard.html")
 
 
 # ==========================================================
@@ -217,7 +192,6 @@ def dashboard():
 @app.route("/logout")
 @login_required
 def logout():
-
     logout_user()
 
     flash(
@@ -234,7 +208,6 @@ def logout():
 
 @app.route("/")
 def inicio():
-
     titulo = "Sistema de Ingeniería TIC"
     mensaje = "Bienvenido al Proyecto Integrador"
 
@@ -246,26 +219,29 @@ def inicio():
 
 
 # ==========================================================
-# PRODUCTOS - LISTAR
+# PRODUCTOS - LISTAR CON JOIN
 # ==========================================================
 
 @app.route("/productos")
 @login_required
 def productos():
-
-    conn = conectar_mysql()
-    cursor = conn.cursor(dictionary=True)
+    conn = conectar_postgresql()
+    cursor = conn.cursor()
 
     cursor.execute("""
         SELECT
-            id_producto AS id,
-            nombre,
-            categoria,
-            descripcion,
-            precio,
-            stock
-        FROM productos
-        ORDER BY id_producto DESC
+            p.id_producto AS id,
+            p.nombre,
+            p.categoria,
+            p.descripcion,
+            p.precio,
+            p.stock,
+            p.id_proveedor,
+            pr.nombre AS proveedor
+        FROM productos p
+        LEFT JOIN proveedores pr
+            ON p.id_proveedor = pr.id_proveedor
+        ORDER BY p.id_producto DESC
     """)
 
     productos = cursor.fetchall()
@@ -280,63 +256,58 @@ def productos():
 
 
 # ==========================================================
-# PRODUCTOS - ELIMINAR
-# ==========================================================
-
-@app.route("/productos/eliminar/<int:id>", methods=["POST"])
-@login_required
-def eliminar_producto(id):
-
-    conn = conectar_mysql()
-    cursor = conn.cursor()
-
-    cursor.execute(
-        "DELETE FROM productos WHERE id_producto = %s",
-        (id,)
-    )
-
-    conn.commit()
-
-    cursor.close()
-    conn.close()
-
-    flash(
-        "Producto eliminado correctamente.",
-        "success"
-    )
-
-    return redirect(url_for("productos"))
-
-
-# ==========================================================
 # PRODUCTOS - NUEVO
 # ==========================================================
 
 @app.route("/productos/nuevo", methods=["GET", "POST"])
 @login_required
 def nuevo_producto():
-
     form = ProductoForm()
 
-    if form.validate_on_submit():
+    conn = conectar_postgresql()
+    cursor = conn.cursor()
 
-        conn = conectar_mysql()
+    cursor.execute("""
+        SELECT id_proveedor, nombre
+        FROM proveedores
+        ORDER BY nombre
+    """)
+
+    proveedores = cursor.fetchall()
+
+    form.proveedor.choices = [
+        (p["id_proveedor"], p["nombre"])
+        for p in proveedores
+    ]
+
+    cursor.close()
+    conn.close()
+
+    if form.validate_on_submit():
+        conn = conectar_postgresql()
         cursor = conn.cursor()
 
         cursor.execute("""
             INSERT INTO productos
-            (nombre, categoria, descripcion, precio, stock)
-            VALUES (%s, %s, %s, %s, %s)
+            (
+                nombre,
+                categoria,
+                descripcion,
+                precio,
+                stock,
+                id_proveedor
+            )
+            VALUES (%s, %s, %s, %s, %s, %s)
         """, (
             form.nombre.data,
             form.categoria.data,
             form.descripcion.data,
             float(form.precio.data),
-            form.stock.data
+            form.stock.data,
+            form.proveedor.data
         ))
 
         conn.commit()
-
         cursor.close()
         conn.close()
 
@@ -345,8 +316,7 @@ def nuevo_producto():
             "success"
         )
 
-        # Vuelve al formulario vacío
-        return redirect(url_for("nuevo_producto"))
+        return redirect(url_for("productos"))
 
     return render_template(
         "formulario_producto.html",
@@ -361,23 +331,20 @@ def nuevo_producto():
 @app.route("/productos/editar/<int:id>", methods=["GET", "POST"])
 @login_required
 def editar_producto(id):
+    conn = conectar_postgresql()
+    cursor = conn.cursor()
 
-    conn = conectar_mysql()
-    cursor = conn.cursor(dictionary=True)
-
-    cursor.execute(
-        """
+    cursor.execute("""
         SELECT *
         FROM productos
         WHERE id_producto = %s
-        """,
-        (id,)
-    )
+    """, (
+        id,
+    ))
 
     producto = cursor.fetchone()
 
     if producto is None:
-
         cursor.close()
         conn.close()
 
@@ -390,15 +357,28 @@ def editar_producto(id):
 
     form = ProductoForm()
 
-    if form.validate_on_submit():
+    cursor.execute("""
+        SELECT id_proveedor, nombre
+        FROM proveedores
+        ORDER BY nombre
+    """)
 
+    proveedores = cursor.fetchall()
+
+    form.proveedor.choices = [
+        (p["id_proveedor"], p["nombre"])
+        for p in proveedores
+    ]
+
+    if form.validate_on_submit():
         cursor.execute("""
             UPDATE productos
             SET nombre = %s,
                 categoria = %s,
                 descripcion = %s,
                 precio = %s,
-                stock = %s
+                stock = %s,
+                id_proveedor = %s
             WHERE id_producto = %s
         """, (
             form.nombre.data,
@@ -406,11 +386,11 @@ def editar_producto(id):
             form.descripcion.data,
             float(form.precio.data),
             form.stock.data,
+            form.proveedor.data,
             id
         ))
 
         conn.commit()
-
         cursor.close()
         conn.close()
 
@@ -421,14 +401,15 @@ def editar_producto(id):
 
         return redirect(url_for("productos"))
 
-    # Cargar los datos actuales del producto
     if not form.is_submitted():
-
         form.nombre.data = producto["nombre"]
         form.categoria.data = producto["categoria"]
         form.descripcion.data = producto["descripcion"]
         form.precio.data = producto["precio"]
         form.stock.data = producto["stock"]
+
+        if producto["id_proveedor"] is not None:
+            form.proveedor.data = producto["id_proveedor"]
 
     cursor.close()
     conn.close()
@@ -441,13 +422,39 @@ def editar_producto(id):
 
 
 # ==========================================================
-# CLIENTES - LISTADO
+# PRODUCTOS - ELIMINAR
+# ==========================================================
+
+@app.route("/productos/eliminar/<int:id>", methods=["POST"])
+@login_required
+def eliminar_producto(id):
+    conn = conectar_postgresql()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "DELETE FROM productos WHERE id_producto = %s",
+        (id,)
+    )
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    flash(
+        "Producto eliminado correctamente.",
+        "success"
+    )
+
+    return redirect(url_for("productos"))
+
+
+# ==========================================================
+# CLIENTES - LISTADO DEMOSTRATIVO
 # ==========================================================
 
 @app.route("/clientes")
 @login_required
 def clientes():
-
     clientes = [
         {
             "nombre": "Universidad Estatal Amazónica",
@@ -473,25 +480,15 @@ def clientes():
 
 
 # ==========================================================
-# CLIENTES - NUEVO
+# CLIENTES - NUEVO DEMOSTRATIVO
 # ==========================================================
 
 @app.route("/clientes/nuevo", methods=["GET", "POST"])
 @login_required
 def nuevo_cliente():
-
     form = ClienteForm()
 
     if form.validate_on_submit():
-
-        cliente = {
-            "nombre": form.nombre.data,
-            "email": form.email.data,
-            "telefono": form.telefono.data
-        }
-
-        print(cliente)
-
         return render_template(
             "formulario_cliente.html",
             form=form,
@@ -505,30 +502,30 @@ def nuevo_cliente():
 
 
 # ==========================================================
-# PROVEEDORES - LISTADO
+# PROVEEDORES - LISTAR
 # ==========================================================
 
 @app.route("/proveedores")
 @login_required
 def proveedores():
+    conn = conectar_postgresql()
+    cursor = conn.cursor()
 
-    proveedores = [
-        {
-            "nombre": "Proveedor Tech Ecuador",
-            "servicio": "Equipos informáticos",
-            "contacto": "0991000001"
-        },
-        {
-            "nombre": "Redes y Comunicaciones",
-            "servicio": "Equipos de red",
-            "contacto": "0991000002"
-        },
-        {
-            "nombre": "Soluciones Digitales",
-            "servicio": "Software y servicios tecnológicos",
-            "contacto": "0991000003"
-        }
-    ]
+    cursor.execute("""
+        SELECT
+            id_proveedor,
+            nombre,
+            empresa,
+            email,
+            telefono
+        FROM proveedores
+        ORDER BY id_proveedor DESC
+    """)
+
+    proveedores = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
 
     return render_template(
         "proveedores.html",
@@ -543,25 +540,38 @@ def proveedores():
 @app.route("/proveedores/nuevo", methods=["GET", "POST"])
 @login_required
 def nuevo_proveedor():
-
     form = ProveedorForm()
 
     if form.validate_on_submit():
+        conn = conectar_postgresql()
+        cursor = conn.cursor()
 
-        proveedor = {
-            "nombre": form.nombre.data,
-            "empresa": form.empresa.data,
-            "email": form.email.data,
-            "telefono": form.telefono.data
-        }
+        cursor.execute("""
+            INSERT INTO proveedores
+            (
+                nombre,
+                empresa,
+                email,
+                telefono
+            )
+            VALUES (%s, %s, %s, %s)
+        """, (
+            form.nombre.data,
+            form.empresa.data,
+            form.email.data,
+            form.telefono.data
+        ))
 
-        print(proveedor)
+        conn.commit()
+        cursor.close()
+        conn.close()
 
-        return render_template(
-            "formulario_proveedor.html",
-            form=form,
-            mensaje="Proveedor registrado correctamente."
+        flash(
+            "Proveedor registrado correctamente.",
+            "success"
         )
+
+        return redirect(url_for("proveedores"))
 
     return render_template(
         "formulario_proveedor.html",
@@ -570,36 +580,137 @@ def nuevo_proveedor():
 
 
 # ==========================================================
-# FACTURACIÓN - LISTADO
+# PROVEEDORES - EDITAR
+# ==========================================================
+
+@app.route("/proveedores/editar/<int:id>", methods=["GET", "POST"])
+@login_required
+def editar_proveedor(id):
+    conn = conectar_postgresql()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT *
+        FROM proveedores
+        WHERE id_proveedor = %s
+    """, (
+        id,
+    ))
+
+    proveedor = cursor.fetchone()
+
+    if proveedor is None:
+        cursor.close()
+        conn.close()
+
+        flash(
+            "Proveedor no encontrado.",
+            "danger"
+        )
+
+        return redirect(url_for("proveedores"))
+
+    form = ProveedorForm()
+
+    if form.validate_on_submit():
+        cursor.execute("""
+            UPDATE proveedores
+            SET nombre = %s,
+                empresa = %s,
+                email = %s,
+                telefono = %s
+            WHERE id_proveedor = %s
+        """, (
+            form.nombre.data,
+            form.empresa.data,
+            form.email.data,
+            form.telefono.data,
+            id
+        ))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        flash(
+            "Proveedor actualizado correctamente.",
+            "success"
+        )
+
+        return redirect(url_for("proveedores"))
+
+    if not form.is_submitted():
+        form.nombre.data = proveedor["nombre"]
+        form.empresa.data = proveedor["empresa"]
+        form.email.data = proveedor["email"]
+        form.telefono.data = proveedor["telefono"]
+
+    cursor.close()
+    conn.close()
+
+    return render_template(
+        "formulario_proveedor.html",
+        form=form,
+        editando=True
+    )
+
+
+# ==========================================================
+# PROVEEDORES - ELIMINAR
+# ==========================================================
+
+@app.route("/proveedores/eliminar/<int:id>", methods=["POST"])
+@login_required
+def eliminar_proveedor(id):
+    conn = conectar_postgresql()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "DELETE FROM proveedores WHERE id_proveedor = %s",
+        (id,)
+    )
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    flash(
+        "Proveedor eliminado correctamente.",
+        "success"
+    )
+
+    return redirect(url_for("proveedores"))
+
+
+# ==========================================================
+# FACTURACIÓN - LISTAR CON JOIN
 # ==========================================================
 
 @app.route("/facturacion")
 @login_required
 def facturacion():
+    conn = conectar_postgresql()
+    cursor = conn.cursor()
 
-    facturas = [
-        {
-            "numero": "F001-001",
-            "cliente": "Universidad Estatal Amazónica",
-            "fecha": "15/08/2026",
-            "total": 950.00,
-            "estado": "Pagada"
-        },
-        {
-            "numero": "F001-002",
-            "cliente": "Empresa Tecnológica Amazonía",
-            "fecha": "15/08/2026",
-            "total": 1450.00,
-            "estado": "Pendiente"
-        },
-        {
-            "numero": "F001-003",
-            "cliente": "Centro Educativo TIC",
-            "fecha": "14/08/2026",
-            "total": 95.00,
-            "estado": "Pagada"
-        }
-    ]
+    cursor.execute("""
+        SELECT
+            f.id_factura,
+            f.cliente,
+            f.cantidad,
+            f.total,
+            f.fecha,
+            f.id_producto,
+            p.nombre AS producto
+        FROM facturas f
+        INNER JOIN productos p
+            ON f.id_producto = p.id_producto
+        ORDER BY f.id_factura DESC
+    """)
+
+    facturas = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
 
     return render_template(
         "facturacion.html",
@@ -614,30 +725,178 @@ def facturacion():
 @app.route("/facturacion/nueva", methods=["GET", "POST"])
 @login_required
 def nueva_factura():
-
     form = FacturacionForm()
 
+    conn = conectar_postgresql()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT id_producto, nombre
+        FROM productos
+        ORDER BY nombre
+    """)
+
+    productos = cursor.fetchall()
+
+    form.producto.choices = [
+        (p["id_producto"], p["nombre"])
+        for p in productos
+    ]
+
+    cursor.close()
+    conn.close()
+
     if form.validate_on_submit():
+        conn = conectar_postgresql()
+        cursor = conn.cursor()
 
-        factura = {
-            "cliente": form.cliente.data,
-            "producto": form.producto.data,
-            "cantidad": form.cantidad.data,
-            "total": float(form.total.data)
-        }
+        cursor.execute("""
+            INSERT INTO facturas
+            (
+                cliente,
+                id_producto,
+                cantidad,
+                total
+            )
+            VALUES (%s, %s, %s, %s)
+        """, (
+            form.cliente.data,
+            form.producto.data,
+            form.cantidad.data,
+            float(form.total.data)
+        ))
 
-        print(factura)
+        conn.commit()
+        cursor.close()
+        conn.close()
 
-        return render_template(
-            "formulario_facturacion.html",
-            form=form,
-            mensaje="Factura registrada correctamente."
+        flash(
+            "Factura registrada correctamente.",
+            "success"
         )
+
+        return redirect(url_for("facturacion"))
 
     return render_template(
         "formulario_facturacion.html",
         form=form
     )
+
+
+# ==========================================================
+# FACTURACIÓN - EDITAR
+# ==========================================================
+
+@app.route("/facturacion/editar/<int:id>", methods=["GET", "POST"])
+@login_required
+def editar_factura(id):
+    conn = conectar_postgresql()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT *
+        FROM facturas
+        WHERE id_factura = %s
+    """, (
+        id,
+    ))
+
+    factura = cursor.fetchone()
+
+    if factura is None:
+        cursor.close()
+        conn.close()
+
+        flash(
+            "Factura no encontrada.",
+            "danger"
+        )
+
+        return redirect(url_for("facturacion"))
+
+    form = FacturacionForm()
+
+    cursor.execute("""
+        SELECT id_producto, nombre
+        FROM productos
+        ORDER BY nombre
+    """)
+
+    productos = cursor.fetchall()
+
+    form.producto.choices = [
+        (p["id_producto"], p["nombre"])
+        for p in productos
+    ]
+
+    if form.validate_on_submit():
+        cursor.execute("""
+            UPDATE facturas
+            SET cliente = %s,
+                id_producto = %s,
+                cantidad = %s,
+                total = %s
+            WHERE id_factura = %s
+        """, (
+            form.cliente.data,
+            form.producto.data,
+            form.cantidad.data,
+            float(form.total.data),
+            id
+        ))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        flash(
+            "Factura actualizada correctamente.",
+            "success"
+        )
+
+        return redirect(url_for("facturacion"))
+
+    if not form.is_submitted():
+        form.cliente.data = factura["cliente"]
+        form.producto.data = factura["id_producto"]
+        form.cantidad.data = factura["cantidad"]
+        form.total.data = factura["total"]
+
+    cursor.close()
+    conn.close()
+
+    return render_template(
+        "formulario_facturacion.html",
+        form=form,
+        editando=True
+    )
+
+
+# ==========================================================
+# FACTURACIÓN - ELIMINAR
+# ==========================================================
+
+@app.route("/facturacion/eliminar/<int:id>", methods=["POST"])
+@login_required
+def eliminar_factura(id):
+    conn = conectar_postgresql()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "DELETE FROM facturas WHERE id_factura = %s",
+        (id,)
+    )
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    flash(
+        "Factura eliminada correctamente.",
+        "success"
+    )
+
+    return redirect(url_for("facturacion"))
 
 
 # ==========================================================

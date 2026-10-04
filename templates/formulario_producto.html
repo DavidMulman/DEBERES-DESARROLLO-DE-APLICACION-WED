@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}Formulario de Producto | Ingeniería TIC{% endblock %}
+{% block title %}
+{% if editando %}
+Editar Producto | Ingeniería TIC
+{% else %}
+Registrar Producto | Ingeniería TIC
+{% endif %}
+{% endblock %}
 
 {% block content %}
 <section class="py-5">
@@ -9,12 +15,19 @@
             <div class="col-md-8">
                 <div class="card shadow-sm p-4">
 
-                    <h2 class="text-center mb-4">Registrar Producto</h2>
+                    <h2 class="text-center mb-4">
+                        {% if editando %}
+                            Editar Producto
+                        {% else %}
+                            Registrar Producto
+                        {% endif %}
+                    </h2>
+
                     {% if mensaje %}
-    <div class="alert alert-success">
-        {{ mensaje }}
-    </div>
-{% endif %}
+                        <div class="alert alert-success">
+                            {{ mensaje }}
+                        </div>
+                    {% endif %}
 
                     <form method="POST" novalidate>
                         {{ form.hidden_tag() }}
@@ -68,6 +81,17 @@
                             {{ form.stock(class="form-control") }}
 
                             {% for error in form.stock.errors %}
+                                <div class="text-danger">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.proveedor.label(class="form-label") }}
+                            {{ form.proveedor(class="form-select") }}
+
+                            {% for error in form.proveedor.errors %}
                                 <div class="text-danger">
                                     {{ error }}
                                 </div>

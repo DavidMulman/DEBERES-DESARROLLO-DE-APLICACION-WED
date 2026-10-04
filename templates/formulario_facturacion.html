@@ -1,15 +1,29 @@
 {% extends "base.html" %}
 
-{% block title %}Formulario de Facturación | Ingeniería TIC{% endblock %}
+{% block title %}
+{% if editando %}
+Editar Factura | Ingeniería TIC
+{% else %}
+Registrar Factura | Ingeniería TIC
+{% endif %}
+{% endblock %}
 
 {% block content %}
+
 <section class="py-5">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8">
+
                 <div class="card shadow-sm p-4">
 
-                    <h2 class="text-center mb-4">Registrar Factura</h2>
+                    <h2 class="text-center mb-4">
+                        {% if editando %}
+                            Editar Factura
+                        {% else %}
+                            Registrar Factura
+                        {% endif %}
+                    </h2>
 
                     {% if mensaje %}
                         <div class="alert alert-success">
@@ -18,6 +32,7 @@
                     {% endif %}
 
                     <form method="POST" novalidate>
+
                         {{ form.hidden_tag() }}
 
                         <div class="mb-3">
@@ -33,7 +48,7 @@
 
                         <div class="mb-3">
                             {{ form.producto.label(class="form-label") }}
-                            {{ form.producto(class="form-control") }}
+                            {{ form.producto(class="form-select") }}
 
                             {% for error in form.producto.errors %}
                                 <div class="text-danger">
@@ -65,14 +80,28 @@
                         </div>
 
                         <div class="d-grid">
-                            {{ form.submit(class="btn btn-primary") }}
+
+                            {% if editando %}
+                                {{ form.submit(
+                                    class="btn btn-warning",
+                                    value="Actualizar factura"
+                                ) }}
+                            {% else %}
+                                {{ form.submit(
+                                    class="btn btn-primary",
+                                    value="Guardar factura"
+                                ) }}
+                            {% endif %}
+
                         </div>
 
                     </form>
 
                 </div>
+
             </div>
         </div>
     </div>
 </section>
+
 {% endblock %}

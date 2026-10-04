@@ -1,41 +1,119 @@
 {% extends "base.html" %}
-{% block title %}Facturación | Ingeniería TIC{% endblock %}
+
+{% block title %}
+Facturación | Ingeniería TIC
+{% endblock %}
+
 {% block content %}
+
 <section>
     <div class="container">
-        <h1 class="text-center mb-4">Módulo de Facturación</h1>
-        <p class="text-center mb-5">Facturas demostrativas para la Semana 9. No se utiliza base de datos.</p>
+
+        <h1 class="text-center mb-4">
+            Módulo de Facturación
+        </h1>
+
+        <p class="text-center mb-5">
+            Facturas registradas y almacenadas en PostgreSQL.
+        </p>
 
         <div class="text-end mb-4">
-    <a href="{{ url_for('nueva_factura') }}" class="btn btn-primary">
-        Nueva factura
-    </a>
-         </div>
-        
+            <a href="{{ url_for('nueva_factura') }}"
+               class="btn btn-primary">
+                Nueva factura
+            </a>
+        </div>
+
         <div class="table-responsive">
+
             <table class="table table-bordered table-hover align-middle shadow-sm">
+
                 <thead class="table-dark">
-                    <tr><th>N.º Factura</th><th>Cliente</th><th>Fecha</th><th>Total</th><th>Estado</th></tr>
-                </thead>
-                <tbody>
-                    {% for factura in facturas %}
                     <tr>
-                        <td>{{ factura.numero }}</td>
-                        <td>{{ factura.cliente }}</td>
-                        <td>{{ factura.fecha }}</td>
-                        <td>${{ "%.2f"|format(factura.total) }}</td>
+                        <th>ID</th>
+                        <th>Cliente</th>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Fecha</th>
+                        <th>Total</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for factura in facturas %}
+
+                    <tr>
+
                         <td>
-                            {% if factura.estado == "Pagada" %}
-                                <span class="badge bg-success">{{ factura.estado }}</span>
-                            {% else %}
-                                <span class="badge bg-warning text-dark">{{ factura.estado }}</span>
-                            {% endif %}
+                            {{ factura.id_factura }}
+                        </td>
+
+                        <td>
+                            {{ factura.cliente }}
+                        </td>
+
+                        <td>
+                            {{ factura.producto }}
+                        </td>
+
+                        <td>
+                            {{ factura.cantidad }}
+                        </td>
+
+                        <td>
+                            {{ factura.fecha.strftime('%d/%m/%Y %H:%M') }}
+                        </td>
+
+                        <td>
+                            ${{ "%.2f"|format(factura.total) }}
+                        </td>
+
+                        <td>
+
+                            <a href="{{ url_for('editar_factura', id=factura.id_factura) }}"
+                               class="btn btn-warning btn-sm">
+                                Editar
+                            </a>
+
+                            <form
+                                action="{{ url_for('eliminar_factura', id=factura.id_factura) }}"
+                                method="POST"
+                                class="d-inline"
+                                onsubmit="return confirm('¿Seguro que deseas eliminar esta factura?');">
+
+                                <button type="submit"
+                                        class="btn btn-danger btn-sm">
+                                    Eliminar
+                                </button>
+
+                            </form>
+
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="7"
+                            class="text-center">
+
+                            No hay facturas registradas.
+
                         </td>
                     </tr>
+
                     {% endfor %}
+
                 </tbody>
+
             </table>
+
         </div>
+
     </div>
 </section>
+
 {% endblock %}

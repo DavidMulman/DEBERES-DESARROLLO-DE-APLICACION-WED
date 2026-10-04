@@ -1,28 +1,91 @@
 {% extends "base.html" %}
-{% block title %}Proveedores | Ingeniería TIC{% endblock %}
+
+{% block title %}
+Proveedores | Ingeniería TIC
+{% endblock %}
+
 {% block content %}
+
 <section>
     <div class="container">
-        <h1 class="text-center mb-4">Módulo de Proveedores</h1>
-        <p class="text-center mb-5">Listado demostrativo de proveedores tecnológicos.</p>
+
+        <h1 class="text-center mb-4">
+            Módulo de Proveedores
+        </h1>
+
+        <p class="text-center mb-5">
+            Listado de proveedores registrados en PostgreSQL.
+        </p>
 
         <div class="text-end mb-4">
-    <a href="{{ url_for('nuevo_proveedor') }}" class="btn btn-primary">
-        Registrar nuevo proveedor
-    </a>
-         </div>
+            <a href="{{ url_for('nuevo_proveedor') }}"
+               class="btn btn-primary">
+                Registrar nuevo proveedor
+            </a>
+        </div>
 
         <div class="row">
+
             {% for proveedor in proveedores %}
+
             <div class="col-md-4 mb-4">
                 <div class="card h-100 p-4 shadow-sm">
-                    <h4>{{ proveedor.nombre }}</h4>
-                    <p><strong>Servicio:</strong> {{ proveedor.servicio }}</p>
-                    <p><strong>Contacto:</strong> {{ proveedor.contacto }}</p>
+
+                    <h4 class="mb-3">
+                        {{ proveedor.nombre }}
+                    </h4>
+
+                    <p>
+                        <strong>Empresa:</strong>
+                        {{ proveedor.empresa }}
+                    </p>
+
+                    <p>
+                        <strong>Email:</strong>
+                        {{ proveedor.email }}
+                    </p>
+
+                    <p>
+                        <strong>Teléfono:</strong>
+                        {{ proveedor.telefono }}
+                    </p>
+
+                    <div class="mt-3 d-flex gap-2">
+
+                        <a href="{{ url_for('editar_proveedor', id=proveedor.id_proveedor) }}"
+                           class="btn btn-warning btn-sm">
+                            Editar
+                        </a>
+
+                        <form action="{{ url_for('eliminar_proveedor', id=proveedor.id_proveedor) }}"
+                              method="POST"
+                              onsubmit="return confirm('¿Está seguro de eliminar este proveedor?');">
+
+                            <button type="submit"
+                                    class="btn btn-danger btn-sm">
+                                Eliminar
+                            </button>
+
+                        </form>
+
+                    </div>
+
                 </div>
             </div>
+
+            {% else %}
+
+            <div class="col-12">
+                <div class="alert alert-info text-center">
+                    No hay proveedores registrados.
+                </div>
+            </div>
+
             {% endfor %}
+
         </div>
+
     </div>
 </section>
+
 {% endblock %}
